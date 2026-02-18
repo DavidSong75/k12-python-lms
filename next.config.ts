@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
-  serverExternalPackages: ["pyodide", "@libsql/client", "@prisma/adapter-libsql"],
+  serverExternalPackages: ["pyodide"],
   turbopack: {},
 };
 
