@@ -1,0 +1,86 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("student") // "student" | "admin"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  progress    Progress[]
+  quizResults QuizResult[]
+}
+
+model Session {
+  id          String @id @default(cuid())
+  number      Int    @unique // 1~11
+  title       String
+  description String
+  duration    Int    @default(100) // minutes
+
+  lessons  Lesson[]
+  quizzes  Quiz[]
+}
+
+model Lesson {
+  id        String @id @default(cuid())
+  sessionId String
+  order     Int
+  title     String
+  type      String @default("lesson") // "lesson" | "practice" | "quiz"
+  content   String // Markdown content (stored as text)
+
+  session   Session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  progress  Progress[]
+
+  @@unique([sessionId, order])
+}
+
+model Quiz {
+  id        String @id @default(cuid())
+  sessionId String
+  question  String
+  options   String // JSON array of options
+  answer    Int    // index of correct option
+  order     Int
+
+  session Session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  results QuizResult[]
+}
+
+model Progress {
+  id          String   @id @default(cuid())
+  userId      String
+  lessonId    String
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model QuizResult {
+  id        String   @id @default(cuid())
+  userId    String
+  quizId    String
+  selected  Int
+  correct   Boolean
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, quizId])
+}
