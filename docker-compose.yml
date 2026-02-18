@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: k12-lms
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=file:/app/data/prod.db
+      - NEXT_PUBLIC_API_URL=http://localhost:3000
+    volumes:
+      - ./docker-data:/app/data
+    restart: unless-stopped

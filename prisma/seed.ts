@@ -11,10 +11,6 @@ const prisma = new PrismaClient();
 
 const allSessions = [session1, session2, session3, session4, session5, session6, session7, session8, session9, session10, session11];
 
-async function hashPassword(plain: string): Promise<string> {
-    return bcrypt.hash(plain, 10);
-}
-
 async function main() {
     // Clear existing data
     await prisma.quizResult.deleteMany();
@@ -24,14 +20,14 @@ async function main() {
     await prisma.session.deleteMany();
 
     // Hash passwords
-    const adminPw = await hashPassword("admin1234");
-    const studentPw = await hashPassword("student1234");
+    const adminPassword = await bcrypt.hash("admin1234", 10);
+    const studentPassword = await bcrypt.hash("student1234", 10);
 
     // Create/update users
     await prisma.user.upsert({
         where: { email: "admin@school.kr" },
-        update: { password: adminPw },
-        create: { name: "김선생", email: "admin@school.kr", password: adminPw, role: "admin" },
+        update: { password: adminPassword }, // Update password just in case
+        create: { name: "김선생", email: "admin@school.kr", password: adminPassword, role: "admin" },
     });
 
     const studentNames = [
@@ -43,8 +39,8 @@ async function main() {
     for (const s of studentNames) {
         await prisma.user.upsert({
             where: { email: s.email },
-            update: { password: studentPw },
-            create: { name: s.name, email: s.email, password: studentPw, role: "student" },
+            update: { password: studentPassword },
+            create: { name: s.name, email: s.email, password: studentPassword, role: "student" },
         });
     }
 
@@ -88,8 +84,7 @@ async function main() {
 
     const totalLessons = allSessions.reduce((acc, s) => acc + s.lessons.length, 0);
     const totalQuizzes = allSessions.reduce((acc, s) => acc + s.quizzes.length, 0);
-    console.log(`\n🎉 Seeded ${totalLessons} lessons, ${totalQuizzes} quizzes across ${allSessions.length} sessions`);
-    console.log(`🔐 Passwords hashed with bcrypt`);
+    console.log(`\n🎉 Done! Total: ${totalLessons} lessons, ${totalQuizzes} quizzes across ${allSessions.length} sessions`);
 }
 
 main()

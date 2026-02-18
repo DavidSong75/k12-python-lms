@@ -3,8 +3,6 @@ import { redirect } from "next/navigation";
 import { getAllStudents, getTotalLessons, getTotalQuizzes, getFullCurriculum } from "@/lib/actions/admin";
 import AdminDashboard from "@/components/AdminDashboard";
 
-
-
 export default async function AdminPage() {
     const user = await getCurrentUser();
     if (!user) redirect("/");
