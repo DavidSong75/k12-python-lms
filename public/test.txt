@@ -1,0 +1,2 @@
+Vercel Static File Test
+If you can see this, Vercel is serving static files correctly.
