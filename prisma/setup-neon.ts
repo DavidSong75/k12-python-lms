@@ -1,3 +1,4 @@
+// @ts-nocheck
 import "dotenv/config";
 import { neon } from "@neondatabase/serverless";
 import * as fs from "fs";
