@@ -3,6 +3,8 @@ import { getSessions, getUserProgress, getUserQuizResults } from "@/lib/actions/
 import { redirect } from "next/navigation";
 import LearningApp from "@/components/LearningApp";
 
+export const dynamic = "force-dynamic";
+
 export default async function LearnPage() {
     const user = await getCurrentUser();
     if (!user) redirect("/");
