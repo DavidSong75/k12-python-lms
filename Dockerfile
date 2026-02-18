@@ -67,4 +67,4 @@ ENV HOSTNAME="0.0.0.0"
 
 # Startup command: push schema to DB (create if missing) then start server
 # We use shell form to chain commands
-CMD npx prisma@5.22.0 db push --accept-data-loss --skip-generate && node server.js
+CMD npx prisma@5.22.0 db push --accept-data-loss --skip-generate && node prisma/seed.js && node server.js
