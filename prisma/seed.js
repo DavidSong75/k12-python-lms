@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
+// import bcrypt from "bcryptjs"; // Removed to avoid runtime dependency issues in Docker
 const sessions1_2_1 = require("./data/sessions1_2");
 const sessions3_4_1 = require("./data/sessions3_4");
 const sessions5_6_1 = require("./data/sessions5_6");
@@ -12,7 +9,14 @@ const sessions7_8_1 = require("./data/sessions7_8");
 const sessions9_1 = require("./data/sessions9");
 const sessions10_11_1 = require("./data/sessions10_11");
 const prisma = new client_1.PrismaClient();
-const allSessions = [sessions1_2_1.session1, sessions1_2_1.session2, sessions3_4_1.session3, sessions3_4_1.session4, sessions5_6_1.session5, sessions5_6_1.session6, sessions7_8_1.session7, sessions7_8_1.session8, sessions9_1.session9, sessions10_11_1.session10, sessions10_11_1.session11];
+const allSessions = [
+    sessions1_2_1.session1, sessions1_2_1.session2,
+    sessions3_4_1.session3, sessions3_4_1.session4,
+    sessions5_6_1.session5, sessions5_6_1.session6,
+    sessions7_8_1.session7, sessions7_8_1.session8,
+    sessions9_1.session9,
+    sessions10_11_1.session10, sessions10_11_1.session11
+];
 async function main() {
     // Clear existing data
     await prisma.quizResult.deleteMany();
@@ -20,9 +24,11 @@ async function main() {
     await prisma.quiz.deleteMany();
     await prisma.lesson.deleteMany();
     await prisma.session.deleteMany();
-    // Hash passwords
-    const adminPassword = await bcryptjs_1.default.hash("admin1234", 10);
-    const studentPassword = await bcryptjs_1.default.hash("student1234", 10);
+    // Hash passwords (Pre-computed to avoid bcryptjs dependency in runtime)
+    // admin1234
+    const adminPassword = "$2b$10$AiqsO1pFS/KQAEMg6JpTuuzOM1YzcLkPwEllok8zxeWfU75F7mL9e";
+    // student1234
+    const studentPassword = "$2b$10$d9IEt3Au1sBfOAZEqV3W/ul4eg3pV2E7jIb5oBVe2kPihuxZnUCau";
     // Create/update users
     await prisma.user.upsert({
         where: { email: "admin@school.kr" },

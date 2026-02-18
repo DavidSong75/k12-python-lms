@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
+// import bcrypt from "bcryptjs"; // Removed to avoid runtime dependency issues in Docker
 import { session1, session2 } from "./data/sessions1_2";
 import { session3, session4 } from "./data/sessions3_4";
 import { session5, session6 } from "./data/sessions5_6";
@@ -9,7 +9,14 @@ import { session10, session11 } from "./data/sessions10_11";
 
 const prisma = new PrismaClient();
 
-const allSessions = [session1, session2, session3, session4, session5, session6, session7, session8, session9, session10, session11];
+const allSessions = [
+    session1, session2,
+    session3, session4,
+    session5, session6,
+    session7, session8,
+    session9,
+    session10, session11
+];
 
 async function main() {
     // Clear existing data
@@ -19,9 +26,11 @@ async function main() {
     await prisma.lesson.deleteMany();
     await prisma.session.deleteMany();
 
-    // Hash passwords
-    const adminPassword = await bcrypt.hash("admin1234", 10);
-    const studentPassword = await bcrypt.hash("student1234", 10);
+    // Hash passwords (Pre-computed to avoid bcryptjs dependency in runtime)
+    // admin1234
+    const adminPassword = "$2b$10$AiqsO1pFS/KQAEMg6JpTuuzOM1YzcLkPwEllok8zxeWfU75F7mL9e";
+    // student1234
+    const studentPassword = "$2b$10$d9IEt3Au1sBfOAZEqV3W/ul4eg3pV2E7jIb5oBVe2kPihuxZnUCau";
 
     // Create/update users
     await prisma.user.upsert({
